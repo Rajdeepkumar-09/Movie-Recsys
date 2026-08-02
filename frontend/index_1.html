@@ -16,119 +16,37 @@
         .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%); }
         .movie-card.selected { border: 3px solid #e50914; transform: scale(0.95); opacity: 0.7;}
         
-        #onboarding-screen {
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
-        }
+        #onboarding-screen { background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); }
 
-        /* Search Bar Styles */
-        .search-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
+        .search-container { position: relative; display: flex; align-items: center; }
         .search-input {
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid #333;
-            color: white;
-            padding: 8px 16px 8px 36px;
-            border-radius: 4px;
-            width: 0;
-            opacity: 0;
-            transition: all 0.3s ease;
-            outline: none;
+            background-color: rgba(0, 0, 0, 0.7); border: 1px solid #333; color: white;
+            padding: 8px 16px 8px 36px; border-radius: 4px; width: 0; opacity: 0; transition: all 0.3s ease; outline: none;
         }
-        .search-input:focus, .search-container.active .search-input {
-            width: 250px;
-            opacity: 1;
-            border-color: #e50914;
-        }
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            color: #aaa;
-            cursor: pointer;
-            z-index: 10;
-        }
+        .search-input:focus, .search-container.active .search-input { width: 250px; opacity: 1; border-color: #e50914; }
+        .search-icon { position: absolute; left: 10px; color: #aaa; cursor: pointer; z-index: 10; }
         .search-results {
-            position: absolute;
-            top: calc(100% + 15px);
-            right: 0;
-            width: 600px;
-            background-color: #141414;
-            border: 1px solid #333;
-            border-radius: 8px;
-            max-height: 65vh;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            padding: 16px;
+            position: absolute; top: calc(100% + 15px); right: 0; width: 600px;
+            background-color: #141414; border: 1px solid #333; border-radius: 8px;
+            max-height: 65vh; overflow-y: auto; z-index: 100; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); padding: 16px;
         }
-        @media (max-width: 768px) {
-            .search-results {
-                width: 90vw;
-                right: -50px;
-            }
-        }
-        .search-results.active {
-            display: block;
-        }
+        @media (max-width: 768px) { .search-results { width: 90vw; right: -50px; } }
+        .search-results.active { display: block; }
 
-        /* Rating Modal Styles */
         .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .rating-modal {
-            background: #1f1f1f;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-            width: 90%;
-            max-width: 400px;
+            background: #1f1f1f; border: 1px solid #333; border-radius: 12px; padding: 24px;
+            text-align: center; transform: scale(0.9); transition: transform 0.3s ease; width: 90%; max-width: 400px;
         }
-        .modal-overlay.active .rating-modal {
-            transform: scale(1);
-        }
-        .stars {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            flex-direction: row-reverse; /* For CSS sibling selector magic */
-        }
-        .stars i {
-            color: #444;
-            font-size: 32px;
-            cursor: pointer;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-        .stars i:hover,
-        .stars i:hover ~ i,
-        .stars i.active,
-        .stars i.active ~ i {
-            color: #fbbf24; /* Tailwind yellow-400 */
-        }
-        .stars i:hover {
-            transform: scale(1.1);
-        }
+        .modal-overlay.active .rating-modal { transform: scale(1); }
+        .stars { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-direction: row-reverse; }
+        .stars i { color: #444; font-size: 32px; cursor: pointer; transition: color 0.2s ease, transform 0.2s ease; }
+        .stars i:hover, .stars i:hover ~ i, .stars i.active, .stars i.active ~ i { color: #fbbf24; }
+        .stars i:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -258,14 +176,24 @@
     </div>
 
     <script>
-        const API_URL = "http://127.0.0.1:8000";
+        // --- YOUR NGROK URL IS HERE! ---
+        const API_URL = "https://crunching-womankind-snowman.ngrok-free.dev"; 
         const TMDB_API_KEY = "2ca80d1e4241236c40285b0850aa0922";
         
+        // This tells Ngrok not to show the warning screen to our API calls
+        const NGROK_HEADERS = {
+            'ngrok-skip-browser-warning': 'true',
+            'Content-Type': 'application/json'
+        };
+        const NGROK_GET_HEADERS = {
+            'ngrok-skip-browser-warning': 'true'
+        };
+
         let selectedMovies = [];
-        let watchHistory = []; // Stores objects {id, title, rating}
+        let watchHistory = []; 
         let sessionWatchCount = 0; 
         let currentHeroMovie = null;
-        const globalMovieDict = {}; // Store data for search results
+        const globalMovieDict = {}; 
 
         // State for the rating modal
         let ratingTargetMovie = null; 
@@ -323,7 +251,6 @@
                 const isSelected = selectedMovies.some(m => m.id === mid);
                 const selectedClass = isSelected ? 'selected' : '';
                 
-                // Use openRatingModal for onboarding
                 return `
                     <div id="movie-${mid}" class="relative w-full aspect-[2/3] rounded-md overflow-hidden bg-gray-800 cursor-pointer movie-card shadow-lg ${selectedClass}" onclick="openRatingModal(${mid}, '${title.replace(/'/g, "\\'")}')">
                         <img src="${posterUrl}" loading="lazy" class="w-full h-full object-cover"/>
@@ -351,18 +278,20 @@
             }
             onboardingSearchTimeout = setTimeout(async () => {
                 try {
-                    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+                    // Added Ngrok Headers Here
+                    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`, { headers: NGROK_GET_HEADERS });
                     const data = await res.json();
                     if (data.results && data.results.length > 0) {
                         renderOnboardingGrid(data.results);
                     } else {
                         document.getElementById('onboarding-grid').innerHTML = '<div class="col-span-full text-center text-gray-400 py-12 text-xl">No movies found. Try another search.</div>';
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.error("Search failed:", e);
+                }
             }, 300);
         }
 
-        // Updated toggleMovie to handle the rating logic
         function toggleMovie(mid, title, rating) {
             const card = document.getElementById(`movie-${mid}`);
             const index = selectedMovies.findIndex(m => m.id === mid);
@@ -417,9 +346,10 @@
             const payload = { ratings: selectedMovies.map(m => [m.id, m.rating]) };
 
             try {
+                // Added Ngrok Headers Here
                 const response = await fetch(`${API_URL}/recommend/homepage`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: NGROK_HEADERS,
                     body: JSON.stringify(payload)
                 });
                 const data = await response.json();
@@ -431,7 +361,8 @@
                 fetchSequenceRecommendations(); 
                 
             } catch (error) {
-                alert("Super Backend Error: Make sure your FastAPI orchestrator is running!");
+                alert("Super Backend Error: Make sure your FastAPI orchestrator is running locally and Ngrok is active!");
+                console.error(error);
                 window.location.reload();
             }
         }
@@ -445,8 +376,6 @@
 
                 const moviePromises = row.movies.map(async (movie) => {
                     const posterUrl = await getPosterUrlByTitle(movie.title);
-                    
-                    // Revert back to watchMovie for dashboard cards
                     return `
                         <div class="relative group w-44 h-64 rounded-md overflow-hidden bg-gray-800 flex-shrink-0 cursor-pointer movie-card shadow-lg" onclick="watchMovie(${movie.movie_id}, '${movie.title.replace(/'/g, "\\'")}', 5.0)">
                             <img src="${posterUrl}" loading="lazy" class="absolute inset-0 w-full h-full object-cover"/>
@@ -515,7 +444,8 @@
             }
             searchTimeout = setTimeout(async () => {
                 try {
-                    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+                    // Added Ngrok Headers Here
+                    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`, { headers: NGROK_GET_HEADERS });
                     const data = await res.json();
                     if (data.results && data.results.length > 0) {
                         renderSearchResults(data.results);
@@ -524,7 +454,9 @@
                         resultsContainer.innerHTML = '<div class="p-4 text-gray-400 text-sm">No results found</div>';
                         resultsContainer.classList.add('active');
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.error("Search Error: ", e);
+                }
             }, 300);
         }
 
@@ -553,10 +485,9 @@
         /* --- RATING & WATCH LOGIC --- */
 
         function openRatingModal(id, title) {
-            // Check if already selected to toggle off without rating
             const isSelected = selectedMovies.some(m => m.id === id);
             if (isSelected) {
-                toggleMovie(id, title, 0); // Toggle off
+                toggleMovie(id, title, 0); 
                 return;
             }
 
@@ -571,7 +502,6 @@
             
             document.getElementById('modal-title').innerText = `Rate: ${title}`;
             
-            // Reset stars visually
             const stars = document.querySelectorAll('#modal-stars i');
             stars.forEach(s => s.classList.remove('active'));
 
@@ -585,26 +515,18 @@
             ratingTargetMovie = null;
         }
 
-        // Setup star click listeners
         document.querySelectorAll('#modal-stars i').forEach(star => {
             star.addEventListener('click', (e) => {
                 const rating = parseInt(e.target.getAttribute('data-rating'));
                 currentSelectedRating = rating;
-                
-                // Remove active class from all
                 document.querySelectorAll('#modal-stars i').forEach(s => s.classList.remove('active'));
-                
-                // Add active class to clicked star and previous (CSS handles previous due to reverse order)
                 e.target.classList.add('active');
             });
         });
 
         function submitRating() {
             if (!ratingTargetMovie) return;
-            
-            // If they didn't select stars, default to 3.0
             const finalRating = currentSelectedRating > 0 ? parseFloat(currentSelectedRating) : 3.0;
-            
             toggleMovie(ratingTargetMovie.id, ratingTargetMovie.title, finalRating);
             closeRatingModal();
         }
@@ -613,17 +535,14 @@
             if (currentHeroMovie) watchMovie(currentHeroMovie.id, currentHeroMovie.title, 5.0);
         }
 
-        // ⚡ THE UPDATED WATCH MOVIE FUNCTION ⚡
         async function watchMovie(id, title, rating) {
             document.getElementById('search-results').classList.remove('active');
             
-            // 1. Update local watch history
             const historyIndex = watchHistory.findIndex(m => m.id === id);
             if (historyIndex > -1) watchHistory.splice(historyIndex, 1);
             watchHistory.push({ id: id, title: title, rating: rating });
             sessionWatchCount++;
 
-            // 2. Update the Hero Banner immediately to show the user's action was registered
             try {
                 const tmdbData = await getMovieDetailsByTitle(title);
                 if (tmdbData) {
@@ -634,48 +553,35 @@
                 }
             } catch(e) {}
             
-            // 3. Scroll back to top to view the updated Hero and new SASRec sequence
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // 4. Update the "Watch History" row UI
             renderHistoryRow();
-            
-            // 5. Instantly update the SASRec (Sequential) row 
             fetchSequenceRecommendations();
-
-            // 6. Instantly update the "Because You Watched..." (Similarity) Row
-            // We run this in the background WITHOUT the full loading screen 
-            // so it updates cleanly after every single movie watch.
             silentRefreshHomepageRecommendations();
 
-            // 7. Full refresh only if they've watched 7 things to clear old recommendations
             if (sessionWatchCount >= 7) {
                 sessionWatchCount = 0;
                 refreshHomepageRecommendations();
             }
         }
 
-        // ⚡ THE NEW SILENT REFRESH FUNCTION ⚡
         async function silentRefreshHomepageRecommendations() {
             const allActivityMap = new Map();
             selectedMovies.forEach(m => allActivityMap.set(m.id, {id: m.id, rating: m.rating}));
             watchHistory.forEach(m => allActivityMap.set(m.id, {id: m.id, rating: m.rating}));
 
-            // Force the backend to center the Similarity Engine on the ABSOLUTE LATEST movie
             const latestMovie = watchHistory[watchHistory.length - 1];
             if (latestMovie) allActivityMap.set(latestMovie.id, {id: latestMovie.id, rating: 5.1});
 
             const payload = { ratings: Array.from(allActivityMap.values()).map(m => [m.id, m.rating]) };
 
             try {
+                // Added Ngrok Headers Here
                 const response = await fetch(`${API_URL}/recommend/homepage`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: NGROK_HEADERS,
                     body: JSON.stringify(payload)
                 });
                 const data = await response.json();
-                
-                // Re-render the rows instantly
                 await renderHomepage(data.rows);
             } catch (error) {
                 console.error("Silent background refresh failed:", error);
@@ -685,14 +591,17 @@
         async function fetchSequenceRecommendations() {
             const fullHistory = [...selectedMovies.map(m => m.id), ...watchHistory.map(m => m.id)];
             try {
+                // Added Ngrok Headers Here
                 const response = await fetch(`${API_URL}/recommend/sequence`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: NGROK_HEADERS,
                     body: JSON.stringify({ user_history: fullHistory })
                 });
                 const data = await response.json();
                 if (data.recommended_movies && data.recommended_movies.length > 0) renderSequenceRow(data.recommended_movies);
-            } catch (e) {}
+            } catch (e) {
+                console.error("Sequence fetch failed:", e);
+            }
         }
 
         async function renderSequenceRow(movies) {
@@ -733,7 +642,6 @@
                         <img src="${posterUrl}" loading="lazy" class="absolute inset-0 w-full h-full object-cover"/>
                         <div class="absolute inset-0 card-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
                             <h3 class="text-white font-bold text-sm drop-shadow-md mb-1">${movie.title}</h3>
-                            <!-- Remove explicit rating display for watched movies if you want -->
                         </div>
                     </div>
                 `;
@@ -750,20 +658,18 @@
 
             const allActivityMap = new Map();
             selectedMovies.forEach(m => allActivityMap.set(m.id, {id: m.id, rating: m.rating}));
-            
-            // Overwrite with any new ratings provided during the session
             watchHistory.forEach(m => allActivityMap.set(m.id, {id: m.id, rating: m.rating}));
 
-            // Optional hack: make the very latest movie 5.1 so it anchors the "Because you watched" row
             const latestMovie = watchHistory[watchHistory.length - 1];
             if (latestMovie) allActivityMap.set(latestMovie.id, {id: latestMovie.id, rating: 5.1});
 
             const payload = { ratings: Array.from(allActivityMap.values()).map(m => [m.id, m.rating]) };
 
             try {
+                // Added Ngrok Headers Here
                 const response = await fetch(`${API_URL}/recommend/homepage`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: NGROK_HEADERS,
                     body: JSON.stringify(payload)
                 });
                 const data = await response.json();
