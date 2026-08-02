@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecFlix | Super Backend Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { background-color: #141414; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; overflow-x: hidden; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .movie-card { transition: transform 0.3s ease; }
+        .movie-card:hover { transform: scale(1.05); z-index: 10; border: 2px solid white;}
+        .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%); }
+        .movie-card.selected { border: 3px solid #e50914; transform: scale(0.95); opacity: 0.7;}
+        
+        #onboarding-screen {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 flex items-center justify-between px-8 py-4 bg-gradient-to-b from-black to-transparent" id="navbar">
+        <div class="flex items-center gap-8">
+            <h1 class="text-red-600 text-3xl font-bold tracking-tighter">RecFlix</h1>
+        </div>
+    </nav>
+
+    <!-- ONBOARDING SCREEN (Forces user to select 15 movies for the models) -->
+    <div id="onboarding-screen" class="fixed inset-0 z-40 flex flex-col items-center pt-24 px-12 overflow-y-auto pb-20">
+        <h2 class="text-4xl font-bold mb-2">Welcome to RecFlix</h2>
+        <p class="text-xl text-gray-400 mb-8">Select <span id="selection-count" class="text-red-500 font-bold">0</span> / 15 movies to build your Taste Profile.</p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4" id="onboarding-grid">
+            <!-- Popular movies injected here -->
+        </div>
+
+        <div class="fixed bottom-0 w-full bg-black py-4 flex justify-center border-t border-gray-800 z-50">
+            <button id="generate-btn" disabled class="bg-gray-600 text-gray-300 font-bold py-3 px-12 rounded opacity-50 cursor-not-allowed transition" onclick="submitOnboarding()">
+                Build My Homepage
+            </button>
+        </div>
+    </div>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen" class="fixed inset-0 z-50 bg-[#141414] hidden flex flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-red-600 mb-4"></div>
+        <h2 class="text-2xl font-bold">Initializing Super Backend...</h2>
+        <p class="text-gray-400 mt-2">1. Manushri's ALS generating candidates...</p>
+        <p class="text-gray-400">2. Suhas's Multi-Modal grouping recommendations...</p>
+        <p class="text-gray-400">3. Rajdeep's SASRec predicting next watch...</p>
+    </div>
+
+    <!-- MAIN HOMEPAGE (Hidden until onboarding completes) -->
+    <div id="main-content" class="hidden pb-20 pt-24 px-12">
+        
+        <!-- Hero Section dynamically set to the user's last picked movie -->
+        <div class="relative w-full h-[60vh] flex items-center mb-12 rounded-xl overflow-hidden shadow-2xl">
+            <img id="heroImage" src="https://image.tmdb.org/t/p/original/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg" class="absolute inset-0 w-full h-full object-cover opacity-50">
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
+            <div class="relative z-10 px-12 max-w-2xl">
+                <h1 class="text-red-500 font-bold tracking-widest text-sm mb-2">YOUR PERSONALIZED HOMEPAGE IS READY</h1>
+                <h1 id="heroTitle" class="text-5xl font-bold mb-4 drop-shadow-lg">Let's Keep Watching</h1>
+                <p class="text-lg text-gray-300 mb-6 drop-shadow-md">Based on the 15 movies you selected, our 3-Model Ensemble has curated a highly personalized viewing experience just for you.</p>
+            </div>
+        </div>
+
+        <div id="rows-container" class="space-y-10">
+            <!-- Dynamic Netflix Rows Injected Here -->
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+        const TMDB_API_KEY = "2ca80d1e4241236c40285b0850aa0922";
+        let selectedMovies = [];
+        
+        // A curated list of recognizable MovieLens IDs and Titles for Onboarding
+        const onboardingMovies = [
+            {id: 1, title: "Toy Story"}, {id: 260, title: "Star Wars: Episode IV"}, {id: 318, title: "The Shawshank Redemption"}, 
+            {id: 356, title: "Forrest Gump"}, {id: 480, title: "Jurassic Park"}, {id: 527, title: "Schindler's List"}, 
+            {id: 589, title: "Terminator 2: Judgment Day"}, {id: 593, title: "The Silence of the Lambs"}, {id: 1196, title: "Star Wars: Episode V"}, 
+            {id: 1198, title: "Raiders of the Lost Ark"}, {id: 2571, title: "The Matrix"}, {id: 2858, title: "American Beauty"}, 
+            {id: 2959, title: "Fight Club"}, {id: 4993, title: "The Lord of the Rings: The Fellowship of the Ring"}, 
+            {id: 5952, title: "The Lord of the Rings: The Two Towers"}, {id: 7153, title: "The Lord of the Rings: The Return of the King"}, 
+            {id: 49272, title: "Casino Royale"}, {id: 58559, title: "The Dark Knight"}, {id: 79132, title: "Inception"}, 
+            {id: 109487, title: "Interstellar"}, {id: 112852, title: "Guardians of the Galaxy"}, {id: 122904, title: "Deadpool"}, 
+            {id: 134130, title: "The Martian"}, {id: 296, title: "Pulp Fiction"}, {id: 50, title: "The Usual Suspects"},
+            {id: 110, title: "Braveheart"}, {id: 111, title: "Taxi Driver"}, {id: 858, title: "The Godfather"}
+        ];
+
+        // Fetches poster from TMDB using a text search (stripping out years like "(1995)")
+        async function getPosterUrlByTitle(title) {
+            const cleanTitle = title.replace(/\(\d{4}\)/g, '').trim();
+            const cached = localStorage.getItem('poster_title_' + cleanTitle);
+            if (cached) return cached;
+
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(cleanTitle)}`);
+                const data = await res.json();
+                if (data.results && data.results.length > 0 && data.results[0].poster_path) {
+                    const url = `https://image.tmdb.org/t/p/w500${data.results[0].poster_path}`;
+                    localStorage.setItem('poster_title_' + cleanTitle, url);
+                    return url;
+                }
+            } catch (e) {}
+            return `https://placehold.co/500x750/222222/888?text=${encodeURIComponent(cleanTitle.substring(0, 15))}`;
+        }
+
+        async function renderOnboarding() {
+            const grid = document.getElementById('onboarding-grid');
+            grid.innerHTML = '';
+            
+            for (const movie of onboardingMovies) {
+                const posterUrl = await getPosterUrlByTitle(movie.title);
+                
+                grid.innerHTML += `
+                    <div id="movie-${movie.id}" class="relative w-full aspect-[2/3] rounded-md overflow-hidden bg-gray-800 cursor-pointer movie-card shadow-lg" onclick="toggleMovie(${movie.id}, '${movie.title.replace(/'/g, "\\'")}')">
+                        <img src="${posterUrl}" class="w-full h-full object-cover"/>
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+                            <i class="fas fa-check text-4xl text-white"></i>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleMovie(mid, title) {
+            const card = document.getElementById(`movie-${mid}`);
+            const index = selectedMovies.findIndex(m => m.id === mid);
+            
+            if (index > -1) {
+                selectedMovies.splice(index, 1);
+                card.classList.remove('selected');
+            } else {
+                if (selectedMovies.length >= 15) return; // Max 15
+                selectedMovies.push({id: mid, title: title});
+                card.classList.add('selected');
+            }
+            
+            document.getElementById('selection-count').innerText = selectedMovies.length;
+            
+            const btn = document.getElementById('generate-btn');
+            if (selectedMovies.length === 15) {
+                btn.disabled = false;
+                btn.classList.remove('bg-gray-600', 'text-gray-300', 'opacity-50', 'cursor-not-allowed');
+                btn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-gray-600', 'text-gray-300', 'opacity-50', 'cursor-not-allowed');
+                btn.classList.remove('bg-red-600', 'text-white', 'hover:bg-red-700');
+            }
+        }
+
+        async function submitOnboarding() {
+            document.getElementById('onboarding-screen').classList.add('hidden');
+            document.getElementById('loading-screen').classList.remove('hidden');
+            document.getElementById('loading-screen').classList.add('flex');
+            
+            // Set Hero backdrop to one of their selected movies
+            const lastPicked = selectedMovies[selectedMovies.length - 1];
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(lastPicked.title)}`);
+                const data = await res.json();
+                if (data.results && data.results.length > 0 && data.results[0].backdrop_path) {
+                    document.getElementById('heroImage').src = `https://image.tmdb.org/t/p/original${data.results[0].backdrop_path}`;
+                }
+            } catch (e) {}
+
+            // Format payload: User gives everything they clicked a "5.0" rating
+            const payload = {
+                ratings: selectedMovies.map(m => [m.id, 5.0])
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/recommend/homepage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                await renderHomepage(data.rows);
+                
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('loading-screen').classList.remove('flex');
+                document.getElementById('main-content').classList.remove('hidden');
+                
+            } catch (error) {
+                alert("Super Backend Error: Make sure your FastAPI orchestrator is running without errors!");
+                window.location.reload();
+            }
+        }
+
+        async function renderHomepage(rows) {
+            const container = document.getElementById('rows-container');
+            container.innerHTML = '';
+            
+            for (const row of rows) {
+                if(!row.movies || row.movies.length === 0) continue;
+
+                let cardsHTML = '';
+                for (const movie of row.movies) {
+                    const posterUrl = await getPosterUrlByTitle(movie.title);
+                    cardsHTML += `
+                        <div class="relative group w-44 h-64 rounded-md overflow-hidden bg-gray-800 flex-shrink-0 cursor-pointer movie-card shadow-lg">
+                            <img src="${posterUrl}" class="absolute inset-0 w-full h-full object-cover"/>
+                            <div class="absolute inset-0 card-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                                <h3 class="text-white font-bold text-sm drop-shadow-md">${movie.title}</h3>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div>
+                        <h2 class="text-xl font-bold mb-3 text-white flex items-center gap-2">
+                            ${row.title} <span class="text-[10px] text-gray-200 bg-red-600 bg-opacity-80 px-2 py-0.5 rounded uppercase tracking-wider font-bold ml-2 shadow-md">${row.tag}</span>
+                        </h2>
+                        <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4 pt-2 px-2 -mx-2">
+                            ${cardsHTML}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Init
+        renderOnboarding();
+    </script>
+</body>
+</html>

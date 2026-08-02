@@ -1,0 +1,328 @@
+(C:\Users\Rajdeep Kumar\movie-recsys\recsys-env) C:\Users\Rajdeep Kumar\movie-recsys>python src\models\build_tag_w2v.py
+🚀 Loading Mappings and Metadata...
+🧠 Preparing Corpus for Word2Vec...
+🏋️‍♂️ Training Word2Vec Model (128 Dimensions)...
+💉 Mapping Word2Vec representations to SASRec Token IDs...
+✅ Pre-trained vectors mapped for 22884 out of 22884 items.
+💾 Word2Vec Matrix saved to data/processed\w2v_embeddings.npy
+
+(C:\Users\Rajdeep Kumar\movie-recsys\recsys-env) C:\Users\Rajdeep Kumar\movie-recsys>python src\train_w2v.py
+🚀 Training Word2Vec-Hybrid SASRec on: cuda
+🚀 INJECTION: Loading pre-trained Word2Vec embeddings into SASRec!
+Epoch [1/100] | Batch [250/538] | Loss: 0.4351
+Epoch [1/100] | Batch [500/538] | Loss: 0.3785
+✅ Epoch 1 Complete | Avg Loss: 0.5225 | Time: 15.17 sec
+Epoch [2/100] | Batch [250/538] | Loss: 0.3414
+Epoch [2/100] | Batch [500/538] | Loss: 0.3124
+✅ Epoch 2 Complete | Avg Loss: 0.3377 | Time: 14.18 sec
+Epoch [3/100] | Batch [250/538] | Loss: 0.3130
+Epoch [3/100] | Batch [500/538] | Loss: 0.2880
+✅ Epoch 3 Complete | Avg Loss: 0.3113 | Time: 14.36 sec
+Epoch [4/100] | Batch [250/538] | Loss: 0.3031
+Epoch [4/100] | Batch [500/538] | Loss: 0.2892
+✅ Epoch 4 Complete | Avg Loss: 0.2941 | Time: 14.20 sec
+Epoch [5/100] | Batch [250/538] | Loss: 0.2771
+Epoch [5/100] | Batch [500/538] | Loss: 0.2855
+✅ Epoch 5 Complete | Avg Loss: 0.2824 | Time: 14.33 sec
+Epoch [6/100] | Batch [250/538] | Loss: 0.2673
+Epoch [6/100] | Batch [500/538] | Loss: 0.2494
+✅ Epoch 6 Complete | Avg Loss: 0.2736 | Time: 14.12 sec
+Epoch [7/100] | Batch [250/538] | Loss: 0.2658
+Epoch [7/100] | Batch [500/538] | Loss: 0.2653
+✅ Epoch 7 Complete | Avg Loss: 0.2674 | Time: 14.06 sec
+Epoch [8/100] | Batch [250/538] | Loss: 0.2737
+Epoch [8/100] | Batch [500/538] | Loss: 0.2558
+✅ Epoch 8 Complete | Avg Loss: 0.2619 | Time: 14.24 sec
+Epoch [9/100] | Batch [250/538] | Loss: 0.2549
+Epoch [9/100] | Batch [500/538] | Loss: 0.2558
+✅ Epoch 9 Complete | Avg Loss: 0.2574 | Time: 14.24 sec
+Epoch [10/100] | Batch [250/538] | Loss: 0.2632
+Epoch [10/100] | Batch [500/538] | Loss: 0.2474
+✅ Epoch 10 Complete | Avg Loss: 0.2544 | Time: 14.27 sec
+Epoch [11/100] | Batch [250/538] | Loss: 0.2583
+Epoch [11/100] | Batch [500/538] | Loss: 0.2492
+✅ Epoch 11 Complete | Avg Loss: 0.2510 | Time: 14.13 sec
+Epoch [12/100] | Batch [250/538] | Loss: 0.2372
+Epoch [12/100] | Batch [500/538] | Loss: 0.2643
+✅ Epoch 12 Complete | Avg Loss: 0.2484 | Time: 14.18 sec
+Epoch [13/100] | Batch [250/538] | Loss: 0.2355
+Epoch [13/100] | Batch [500/538] | Loss: 0.2459
+✅ Epoch 13 Complete | Avg Loss: 0.2452 | Time: 14.28 sec
+Epoch [14/100] | Batch [250/538] | Loss: 0.2637
+Epoch [14/100] | Batch [500/538] | Loss: 0.2197
+✅ Epoch 14 Complete | Avg Loss: 0.2444 | Time: 14.23 sec
+Epoch [15/100] | Batch [250/538] | Loss: 0.2330
+Epoch [15/100] | Batch [500/538] | Loss: 0.2566
+✅ Epoch 15 Complete | Avg Loss: 0.2419 | Time: 14.16 sec
+Epoch [16/100] | Batch [250/538] | Loss: 0.2280
+Epoch [16/100] | Batch [500/538] | Loss: 0.2241
+✅ Epoch 16 Complete | Avg Loss: 0.2397 | Time: 14.00 sec
+Epoch [17/100] | Batch [250/538] | Loss: 0.2285
+Epoch [17/100] | Batch [500/538] | Loss: 0.2348
+✅ Epoch 17 Complete | Avg Loss: 0.2390 | Time: 14.10 sec
+Epoch [18/100] | Batch [250/538] | Loss: 0.2238
+Epoch [18/100] | Batch [500/538] | Loss: 0.2273
+✅ Epoch 18 Complete | Avg Loss: 0.2366 | Time: 14.26 sec
+Epoch [19/100] | Batch [250/538] | Loss: 0.2539
+Epoch [19/100] | Batch [500/538] | Loss: 0.2342
+✅ Epoch 19 Complete | Avg Loss: 0.2354 | Time: 14.25 sec
+Epoch [20/100] | Batch [250/538] | Loss: 0.2423
+Epoch [20/100] | Batch [500/538] | Loss: 0.2503
+✅ Epoch 20 Complete | Avg Loss: 0.2339 | Time: 14.19 sec
+Epoch [21/100] | Batch [250/538] | Loss: 0.2082
+Epoch [21/100] | Batch [500/538] | Loss: 0.2340
+✅ Epoch 21 Complete | Avg Loss: 0.2328 | Time: 13.77 sec
+Epoch [22/100] | Batch [250/538] | Loss: 0.2272
+Epoch [22/100] | Batch [500/538] | Loss: 0.2305
+✅ Epoch 22 Complete | Avg Loss: 0.2317 | Time: 13.19 sec
+Epoch [23/100] | Batch [250/538] | Loss: 0.2163
+Epoch [23/100] | Batch [500/538] | Loss: 0.2227
+✅ Epoch 23 Complete | Avg Loss: 0.2300 | Time: 14.21 sec
+Epoch [24/100] | Batch [250/538] | Loss: 0.2354
+Epoch [24/100] | Batch [500/538] | Loss: 0.2102
+✅ Epoch 24 Complete | Avg Loss: 0.2294 | Time: 14.25 sec
+Epoch [25/100] | Batch [250/538] | Loss: 0.2470
+Epoch [25/100] | Batch [500/538] | Loss: 0.2357
+✅ Epoch 25 Complete | Avg Loss: 0.2287 | Time: 14.17 sec
+Epoch [26/100] | Batch [250/538] | Loss: 0.2231
+Epoch [26/100] | Batch [500/538] | Loss: 0.2207
+✅ Epoch 26 Complete | Avg Loss: 0.2276 | Time: 14.28 sec
+Epoch [27/100] | Batch [250/538] | Loss: 0.2441
+Epoch [27/100] | Batch [500/538] | Loss: 0.2253
+✅ Epoch 27 Complete | Avg Loss: 0.2265 | Time: 13.94 sec
+Epoch [28/100] | Batch [250/538] | Loss: 0.2297
+Epoch [28/100] | Batch [500/538] | Loss: 0.2127
+✅ Epoch 28 Complete | Avg Loss: 0.2256 | Time: 14.41 sec
+Epoch [29/100] | Batch [250/538] | Loss: 0.2205
+Epoch [29/100] | Batch [500/538] | Loss: 0.2295
+✅ Epoch 29 Complete | Avg Loss: 0.2247 | Time: 14.35 sec
+Epoch [30/100] | Batch [250/538] | Loss: 0.2205
+Epoch [30/100] | Batch [500/538] | Loss: 0.2123
+✅ Epoch 30 Complete | Avg Loss: 0. | Time: 14.44 sec
+Epoch [31/100] | Batch [250/538] | Loss: 0.2180
+Epoch [31/100] | Batch [500/538] | Loss: 0.2108
+✅ Epoch 31 Complete | Avg Loss: 0.2229 | Time: 14.16 sec
+Epoch [32/100] | Batch [250/538] | Loss: 0.2231
+Epoch [32/100] | Batch [500/538] | Loss: 0.2083
+✅ Epoch 32 Complete | Avg Loss: 0.2223 | Time: 14.23 sec
+Epoch [33/100] | Batch [250/538] | Loss: 0.2078
+Epoch [33/100] | Batch [500/538] | Loss: 0.2232
+✅ Epoch 33 Complete | Avg Loss: 0.2223 | Time: 14.11 sec
+Epoch [34/100] | Batch [250/538] | Loss: 0.2182
+Epoch [34/100] | Batch [500/538] | Loss: 0.2302
+✅ Epoch 34 Complete | Avg Loss: 0.2212 | Time: 14.31 sec
+Epoch [35/100] | Batch [250/538] | Loss: 0.2275
+Epoch [35/100] | Batch [500/538] | Loss: 0.2332
+✅ Epoch 35 Complete | Avg Loss: 0.2206 | Time: 14.11 sec
+Epoch [36/100] | Batch [250/538] | Loss: 0.2220
+Epoch [36/100] | Batch [500/538] | Loss: 0.2213
+✅ Epoch 36 Complete | Avg Loss: 0.2204 | Time: 14.37 sec
+Epoch [37/100] | Batch [250/538] | Loss: 0.2146
+Epoch [37/100] | Batch [500/538] | Loss: 0.2226
+✅ Epoch 37 Complete | Avg Loss: 0.2194 | Time: 14.15 sec
+Epoch [38/100] | Batch [250/538] | Loss: 0.2015
+Epoch [38/100] | Batch [500/538] | Loss: 0.2151
+✅ Epoch 38 Complete | Avg Loss: 0.2183 | Time: 14.16 sec
+Epoch [39/100] | Batch [250/538] | Loss: 0.2146
+Epoch [39/100] | Batch [500/538] | Loss: 0.2178
+✅ Epoch 39 Complete | Avg Loss: 0.2180 | Time: 14.18 sec
+Epoch [40/100] | Batch [250/538] | Loss: 0.2234
+Epoch [40/100] | Batch [500/538] | Loss: 0.2217
+✅ Epoch 40 Complete | Avg Loss: 0.2174 | Time: 14.44 sec
+Epoch [41/100] | Batch [250/538] | Loss: 0.2273
+Epoch [41/100] | Batch [500/538] | Loss: 0.2157
+✅ Epoch 41 Complete | Avg Loss: 0.2172 | Time: 14.14 sec
+Epoch [42/100] | Batch [250/538] | Loss: 0.2209
+Epoch [42/100] | Batch [500/538] | Loss: 0.2153
+✅ Epoch 42 Complete | Avg Loss: 0.2162 | Time: 14.26 sec
+Epoch [43/100] | Batch [250/538] | Loss: 0.2281
+Epoch [43/100] | Batch [500/538] | Loss: 0.1994
+✅ Epoch 43 Complete | Avg Loss: 0.2154 | Time: 14.25 sec
+Epoch [44/100] | Batch [250/538] | Loss: 0.2171
+Epoch [44/100] | Batch [500/538] | Loss: 0.2241
+✅ Epoch 44 Complete | Avg Loss: 0.2154 | Time: 14.05 sec
+Epoch [45/100] | Batch [250/538] | Loss: 0.2220
+Epoch [45/100] | Batch [500/538] | Loss: 0.2167
+✅ Epoch 45 Complete | Avg Loss: 0.2152 | Time: 14.30 sec
+Epoch [46/100] | Batch [250/538] | Loss: 0.2098
+Epoch [46/100] | Batch [500/538] | Loss: 0.2262
+✅ Epoch 46 Complete | Avg Loss: 0.2145 | Time: 14.17 sec
+Epoch [47/100] | Batch [250/538] | Loss: 0.2068
+Epoch [47/100] | Batch [500/538] | Loss: 0.2246
+✅ Epoch 47 Complete | Avg Loss: 0.2146 | Time: 14.29 sec
+Epoch [48/100] | Batch [250/538] | Loss: 0.2143
+Epoch [48/100] | Batch [500/538] | Loss: 0.2343
+✅ Epoch 48 Complete | Avg Loss: 0.2136 | Time: 14.07 sec
+Epoch [49/100] | Batch [250/538] | Loss: 0.2083
+Epoch [49/100] | Batch [500/538] | Loss: 0.2306
+✅ Epoch 49 Complete | Avg Loss: 0.2132 | Time: 13.98 sec
+Epoch [50/100] | Batch [250/538] | Loss: 0.2214
+Epoch [50/100] | Batch [500/538] | Loss: 0.2024
+✅ Epoch 50 Complete | Avg Loss: 0.2129 | Time: 14.15 sec
+Epoch [51/100] | Batch [250/538] | Loss: 0.2112
+Epoch [51/100] | Batch [500/538] | Loss: 0.2127
+✅ Epoch 51 Complete | Avg Loss: 0.2120 | Time: 14.20 sec
+Epoch [52/100] | Batch [250/538] | Loss: 0.2119
+Epoch [52/100] | Batch [500/538] | Loss: 0.2106
+✅ Epoch 52 Complete | Avg Loss: 0.2118 | Time: 12.45 sec
+Epoch [53/100] | Batch [250/538] | Loss: 0.2026
+Epoch [53/100] | Batch [500/538] | Loss: 0.2093
+✅ Epoch 53 Complete | Avg Loss: 0.2121 | Time: 14.09 sec
+Epoch [54/100] | Batch [250/538] | Loss: 0.2127
+Epoch [54/100] | Batch [500/538] | Loss: 0.2096
+✅ Epoch 54 Complete | Avg Loss: 0.2113 | Time: 14.33 sec
+Epoch [55/100] | Batch [250/538] | Loss: 0.2017
+Epoch [55/100] | Batch [500/538] | Loss: 0.2142
+✅ Epoch 55 Complete | Avg Loss: 0.2114 | Time: 14.23 sec
+Epoch [56/100] | Batch [250/538] | Loss: 0.1996
+Epoch [56/100] | Batch [500/538] | Loss: 0.2147
+✅ Epoch 56 Complete | Avg Loss: 0.2103 | Time: 14.55 sec
+Epoch [57/100] | Batch [250/538] | Loss: 0.2094
+Epoch [57/100] | Batch [500/538] | Loss: 0.2201
+✅ Epoch 57 Complete | Avg Loss: 0.2100 | Time: 14.71 sec
+Epoch [58/100] | Batch [250/538] | Loss: 0.2178
+Epoch [58/100] | Batch [500/538] | Loss: 0.2102
+✅ Epoch 58 Complete | Avg Loss: 0.2097 | Time: 14.33 sec
+Epoch [59/100] | Batch [250/538] | Loss: 0.2084
+Epoch [59/100] | Batch [500/538] | Loss: 0.2050
+✅ Epoch 59 Complete | Avg Loss: 0.2098 | Time: 14.21 sec
+Epoch [60/100] | Batch [250/538] | Loss: 0.2187
+Epoch [60/100] | Batch [500/538] | Loss: 0.2074
+✅ Epoch 60 Complete | Avg Loss: 0.2095 | Time: 14.59 sec
+Epoch [61/100] | Batch [250/538] | Loss: 0.2221
+Epoch [61/100] | Batch [500/538] | Loss: 0.2195
+✅ Epoch 61 Complete | Avg Loss: 0.2089 | Time: 14.37 sec
+Epoch [62/100] | Batch [250/538] | Loss: 0.2038
+Epoch [62/100] | Batch [500/538] | Loss: 0.2018
+✅ Epoch 62 Complete | Avg Loss: 0.2087 | Time: 14.02 sec
+Epoch [63/100] | Batch [250/538] | Loss: 0.2333
+Epoch [63/100] | Batch [500/538] | Loss: 0.2181
+✅ Epoch 63 Complete | Avg Loss: 0.2079 | Time: 14.10 sec
+Epoch [64/100] | Batch [250/538] | Loss: 0.2192
+Epoch [64/100] | Batch [500/538] | Loss: 0.2130
+✅ Epoch 64 Complete | Avg Loss: 0.2083 | Time: 13.90 sec
+Epoch [65/100] | Batch [250/538] | Loss: 0.2120
+Epoch [65/100] | Batch [500/538] | Loss: 0.2167
+✅ Epoch 65 Complete | Avg Loss: 0.2076 | Time: 14.33 sec
+Epoch [66/100] | Batch [250/538] | Loss: 0.2265
+Epoch [66/100] | Batch [500/538] | Loss: 0.2006
+✅ Epoch 66 Complete | Avg Loss: 0.2079 | Time: 14.11 sec
+Epoch [67/100] | Batch [250/538] | Loss: 0.2078
+Epoch [67/100] | Batch [500/538] | Loss: 0.1902
+✅ Epoch 67 Complete | Avg Loss: 0.2072 | Time: 14.30 sec
+Epoch [68/100] | Batch [250/538] | Loss: 0.2141
+Epoch [68/100] | Batch [500/538] | Loss: 0.2030
+✅ Epoch 68 Complete | Avg Loss: 0.2073 | Time: 14.10 sec
+Epoch [69/100] | Batch [250/538] | Loss: 0.1944
+Epoch [69/100] | Batch [500/538] | Loss: 0.2175
+✅ Epoch 69 Complete | Avg Loss: 0.2071 | Time: 13.92 sec
+Epoch [70/100] | Batch [250/538] | Loss: 0.2081
+Epoch [70/100] | Batch [500/538] | Loss: 0.2079
+✅ Epoch 70 Complete | Avg Loss: 0.2065 | Time: 14.02 sec
+Epoch [71/100] | Batch [250/538] | Loss: 0.2011
+Epoch [71/100] | Batch [500/538] | Loss: 0.2097
+✅ Epoch 71 Complete | Avg Loss: 0.2068 | Time: 14.06 sec
+Epoch [72/100] | Batch [250/538] | Loss: 0.2048
+Epoch [72/100] | Batch [500/538] | Loss: 0.2145
+✅ Epoch 72 Complete | Avg Loss: 0.2057 | Time: 14.31 sec
+Epoch [73/100] | Batch [250/538] | Loss: 0.2002
+Epoch [73/100] | Batch [500/538] | Loss: 0.2004
+✅ Epoch 73 Complete | Avg Loss: 0.2061 | Time: 14.07 sec
+Epoch [74/100] | Batch [250/538] | Loss: 0.2058
+Epoch [74/100] | Batch [500/538] | Loss: 0.2050
+✅ Epoch 74 Complete | Avg Loss: 0.2060 | Time: 14.10 sec
+Epoch [75/100] | Batch [250/538] | Loss: 0.2128
+Epoch [75/100] | Batch [500/538] | Loss: 0.2114
+✅ Epoch 75 Complete | Avg Loss: 0.2058 | Time: 14.16 sec
+Epoch [76/100] | Batch [250/538] | Loss: 0.2080
+Epoch [76/100] | Batch [500/538] | Loss: 0.2091
+✅ Epoch 76 Complete | Avg Loss: 0.2053 | Time: 14.17 sec
+Epoch [77/100] | Batch [250/538] | Loss: 0.2082
+Epoch [77/100] | Batch [500/538] | Loss: 0.1957
+✅ Epoch 77 Complete | Avg Loss: 0.2054 | Time: 14.04 sec
+Epoch [78/100] | Batch [250/538] | Loss: 0.2090
+Epoch [78/100] | Batch [500/538] | Loss: 0.2068
+✅ Epoch 78 Complete | Avg Loss: 0.2046 | Time: 14.19 sec
+Epoch [79/100] | Batch [250/538] | Loss: 0.2072
+Epoch [79/100] | Batch [500/538] | Loss: 0.2129
+✅ Epoch 79 Complete | Avg Loss: 0.2052 | Time: 14.40 sec
+Epoch [80/100] | Batch [250/538] | Loss: 0.2268
+Epoch [80/100] | Batch [500/538] | Loss: 0.2054
+✅ Epoch 80 Complete | Avg Loss: 0.2050 | Time: 14.44 sec
+Epoch [81/100] | Batch [250/538] | Loss: 0.2053
+Epoch [81/100] | Batch [500/538] | Loss: 0.2035
+✅ Epoch 81 Complete | Avg Loss: 0.2044 | Time: 14.58 sec
+Epoch [82/100] | Batch [250/538] | Loss: 0.2142
+Epoch [82/100] | Batch [500/538] | Loss: 0.2013
+✅ Epoch 82 Complete | Avg Loss: 0.2045 | Time: 14.34 sec
+Epoch [83/100] | Batch [250/538] | Loss: 0.2013
+Epoch [83/100] | Batch [500/538] | Loss: 0.2125
+✅ Epoch 83 Complete | Avg Loss: 0.2040 | Time: 14.13 sec
+Epoch [84/100] | Batch [250/538] | Loss: 0.2042
+Epoch [84/100] | Batch [500/538] | Loss: 0.2026
+✅ Epoch 84 Complete | Avg Loss: 0.2042 | Time: 14.36 sec
+Epoch [85/100] | Batch [250/538] | Loss: 0.2073
+Epoch [85/100] | Batch [500/538] | Loss: 0.1985
+✅ Epoch 85 Complete | Avg Loss: 0.2043 | Time: 14.18 sec
+Epoch [86/100] | Batch [250/538] | Loss: 0.2000
+Epoch [86/100] | Batch [500/538] | Loss: 0.2051
+✅ Epoch 86 Complete | Avg Loss: 0.2038 | Time: 14.14 sec
+Epoch [87/100] | Batch [250/538] | Loss: 0.1972
+Epoch [87/100] | Batch [500/538] | Loss: 0.2000
+✅ Epoch 87 Complete | Avg Loss: 0.2040 | Time: 13.99 sec
+Epoch [88/100] | Batch [250/538] | Loss: 0.2020
+Epoch [88/100] | Batch [500/538] | Loss: 0.2176
+✅ Epoch 88 Complete | Avg Loss: 0.2036 | Time: 14.13 sec
+Epoch [89/100] | Batch [250/538] | Loss: 0.1949
+Epoch [89/100] | Batch [500/538] | Loss: 0.2157
+✅ Epoch 89 Complete | Avg Loss: 0.2038 | Time: 14.20 sec
+Epoch [90/100] | Batch [250/538] | Loss: 0.2011
+Epoch [90/100] | Batch [500/538] | Loss: 0.1937
+✅ Epoch 90 Complete | Avg Loss: 0.2034 | Time: 14.09 sec
+Epoch [91/100] | Batch [250/538] | Loss: 0.2032
+Epoch [91/100] | Batch [500/538] | Loss: 0.2128
+✅ Epoch 91 Complete | Avg Loss: 0.2032 | Time: 14.23 sec
+Epoch [92/100] | Batch [250/538] | Loss: 0.2064
+Epoch [92/100] | Batch [500/538] | Loss: 0.2168
+✅ Epoch 92 Complete | Avg Loss: 0.2027 | Time: 14.46 sec
+Epoch [93/100] | Batch [250/538] | Loss: 0.1871
+Epoch [93/100] | Batch [500/538] | Loss: 0.2154
+✅ Epoch 93 Complete | Avg Loss: 0.2031 | Time: 14.05 sec
+Epoch [94/100] | Batch [250/538] | Loss: 0.2033
+Epoch [94/100] | Batch [500/538] | Loss: 0.2085
+✅ Epoch 94 Complete | Avg Loss: 0.2028 | Time: 14.07 sec
+Epoch [95/100] | Batch [250/538] | Loss: 0.1986
+Epoch [95/100] | Batch [500/538] | Loss: 0.1958
+✅ Epoch 95 Complete | Avg Loss: 0.2022 | Time: 14.13 sec
+Epoch [96/100] | Batch [250/538] | Loss: 0.1981
+Epoch [96/100] | Batch [500/538] | Loss: 0.2053
+✅ Epoch 96 Complete | Avg Loss: 0.2031 | Time: 14.17 sec
+Epoch [97/100] | Batch [250/538] | Loss: 0.1973
+Epoch [97/100] | Batch [500/538] | Loss: 0.2225
+✅ Epoch 97 Complete | Avg Loss: 0.2021 | Time: 14.37 sec
+Epoch [98/100] | Batch [250/538] | Loss: 0.2144
+Epoch [98/100] | Batch [500/538] | Loss: 0.1900
+✅ Epoch 98 Complete | Avg Loss: 0.2024 | Time: 14.13 sec
+Epoch [99/100] | Batch [250/538] | Loss: 0.2096
+Epoch [99/100] | Batch [500/538] | Loss: 0.2006
+✅ Epoch 99 Complete | Avg Loss: 0.2020 | Time: 14.02 sec
+Epoch [100/100] | Batch [250/538] | Loss: 0.1991
+Epoch [100/100] | Batch [500/538] | Loss: 0.2012
+✅ Epoch 100 Complete | Avg Loss: 0.2024 | Time: 14.05 sec
+💾 Hybrid weights saved to models/weights\sasrec_w2v_model.pth
+
+(C:\Users\Rajdeep Kumar\movie-recsys\recsys-env) C:\Users\Rajdeep Kumar\movie-recsys>  Model loaded. Starting rigorous full-catalog evaluation...
+Processed 25600/137477 users...
+Processed 51200/137477 users...
+Processed 76800/137477 users...
+Processed 102400/137477 users...
+Processed 128000/137477 users...
+
+========================================
+🏆 SASREC EVALUATION RESULTS
+========================================
+Hit Ratio @ 10 : 0.0905
+NDCG @ 10      : 0.0374
+========================================
+
+(C:\Users\Rajdeep Kumar\movie-recsys\recsys-env) C:\Users\Rajdeep Kumar\movie-recsys>

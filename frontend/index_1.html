@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecFlix | Super Backend Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { background-color: #141414; color: #ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; overflow-x: hidden; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .movie-card { transition: transform 0.3s ease; }
+        .movie-card:hover { transform: scale(1.05); z-index: 10; border: 2px solid white;}
+        .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%); }
+        .movie-card.selected { border: 3px solid #e50914; transform: scale(0.95); opacity: 0.7;}
+        
+        #onboarding-screen {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Search Bar Styles */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-input {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            color: white;
+            padding: 8px 16px 8px 36px;
+            border-radius: 4px;
+            width: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .search-input:focus, .search-container.active .search-input {
+            width: 250px;
+            opacity: 1;
+            border-color: #e50914;
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            color: #aaa;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .search-results {
+            position: absolute;
+            top: calc(100% + 15px);
+            right: 0;
+            width: 600px;
+            background-color: #141414;
+            border: 1px solid #333;
+            border-radius: 8px;
+            max-height: 65vh;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            padding: 16px;
+        }
+        @media (max-width: 768px) {
+            .search-results {
+                width: 90vw;
+                right: -50px;
+            }
+        }
+        .search-results.active {
+            display: block;
+        }
+
+        /* Rating Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .rating-modal {
+            background: #1f1f1f;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal-overlay.active .rating-modal {
+            transform: scale(1);
+        }
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-direction: row-reverse; /* For CSS sibling selector magic */
+        }
+        .stars i {
+            color: #444;
+            font-size: 32px;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .stars i:hover,
+        .stars i:hover ~ i,
+        .stars i.active,
+        .stars i.active ~ i {
+            color: #fbbf24; /* Tailwind yellow-400 */
+        }
+        .stars i:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 flex items-center justify-between px-8 py-4 bg-gradient-to-b from-black to-transparent transition-colors duration-300" id="navbar">
+        <div class="flex items-center gap-8">
+            <h1 class="text-red-600 text-3xl font-bold tracking-tighter cursor-pointer" onclick="window.scrollTo(0,0)">RecFlix</h1>
+            <div id="nav-links" class="hidden md:flex gap-4 text-sm font-semibold text-gray-300">
+                <a href="#" class="hover:text-white transition">Home</a>
+                <a href="#" class="hover:text-white transition">TV Shows</a>
+                <a href="#" class="hover:text-white transition">Movies</a>
+                <a href="#" class="hover:text-white transition" onclick="showHistory()">My Watch History</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-6">
+            <!-- Search Component -->
+            <div class="search-container" id="search-container">
+                <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
+                <input type="text" id="search-input" class="search-input" placeholder="Titles, people, genres" oninput="handleSearch(this.value)">
+                <div class="search-results" id="search-results"></div>
+            </div>
+            <i class="fas fa-bell text-gray-300 hover:text-white cursor-pointer text-lg"></i>
+            <div class="w-8 h-8 rounded bg-red-600 flex items-center justify-center text-white font-bold cursor-pointer">U</div>
+        </div>
+    </nav>
+
+    <!-- ONBOARDING SCREEN -->
+    <div id="onboarding-screen" class="fixed inset-0 z-40 flex flex-col items-center pt-24 px-12 overflow-y-auto pb-20">
+        <h2 class="text-4xl font-bold mb-2">Welcome to RecFlix</h2>
+        <p class="text-xl text-gray-400 mb-6">Select <span id="selection-count" class="text-red-500 font-bold">0</span> / 5 movies to build your Taste Profile.</p>
+        
+        <!-- Onboarding Search Bar -->
+        <div class="w-full max-w-2xl mb-8 relative">
+            <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+            <input type="text" id="onboarding-search" class="w-full bg-[rgba(0,0,0,0.7)] border border-gray-700 text-white px-12 py-4 rounded-full focus:outline-none focus:border-red-600 transition shadow-lg text-lg" placeholder="Search for your favorite movies..." oninput="handleOnboardingSearch(this.value)">
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 w-full max-w-7xl" id="onboarding-grid">
+            <!-- Popular movies injected here -->
+        </div>
+
+        <div class="fixed bottom-0 w-full bg-black py-4 flex justify-center border-t border-gray-800 z-50">
+            <button id="generate-btn" disabled class="bg-gray-600 text-gray-300 font-bold py-3 px-12 rounded opacity-50 cursor-not-allowed transition" onclick="submitOnboarding()">
+                Build My Homepage
+            </button>
+        </div>
+    </div>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen" class="fixed inset-0 z-50 bg-[#141414] hidden flex flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-red-600 mb-4"></div>
+        <h2 class="text-2xl font-bold">Initializing Super Backend...</h2>
+        <p class="text-gray-400 mt-2">1. Manushri's ALS generating candidates...</p>
+        <p class="text-gray-400">2. Suhas's Multi-Modal grouping recommendations...</p>
+        <p class="text-gray-400">3. Rajdeep's SASRec predicting next watch...</p>
+    </div>
+
+    <!-- RATING MODAL -->
+    <div class="modal-overlay" id="rating-modal">
+        <div class="rating-modal">
+            <h3 class="text-xl font-bold mb-1" id="modal-title">Rate Movie</h3>
+            <p class="text-gray-400 text-sm mb-4">How did you like it?</p>
+            
+            <div class="stars" id="modal-stars">
+                <!-- Stars rendered in reverse order for CSS styling -->
+                <i class="fas fa-star" data-rating="5"></i>
+                <i class="fas fa-star" data-rating="4"></i>
+                <i class="fas fa-star" data-rating="3"></i>
+                <i class="fas fa-star" data-rating="2"></i>
+                <i class="fas fa-star" data-rating="1"></i>
+            </div>
+            
+            <div class="flex gap-3 justify-center mt-6">
+                <button class="px-6 py-2 rounded border border-gray-600 text-white hover:bg-gray-800 transition" onclick="closeRatingModal()">Cancel</button>
+                <button class="px-6 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition font-bold" onclick="submitRating()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HOMEPAGE (Hidden until onboarding completes) -->
+    <div id="main-content" class="hidden pb-20 pt-24 px-12">
+        
+        <!-- Hero Section dynamically set to the user's last picked/watched movie -->
+        <div class="relative w-full h-[70vh] flex items-center mb-12 rounded-xl overflow-hidden shadow-2xl">
+            <img id="heroImage" src="https://image.tmdb.org/t/p/original/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg" class="absolute inset-0 w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-transparent"></div>
+            <div class="relative z-10 px-16 max-w-3xl">
+                <h1 class="text-red-500 font-bold tracking-widest text-sm mb-3 drop-shadow-md">YOUR PERSONALIZED HOMEPAGE</h1>
+                <h1 id="heroTitle" class="text-6xl font-extrabold mb-4 drop-shadow-lg leading-tight">Let's Keep Watching</h1>
+                <p id="heroDesc" class="text-lg text-gray-300 mb-8 drop-shadow-md max-w-2xl line-clamp-3">Based on your selections, our 3-Model Ensemble has curated a highly personalized viewing experience just for you.</p>
+                <div class="flex gap-4">
+                    <button id="heroPlayBtn" class="bg-white text-black font-bold py-3 px-8 rounded flex items-center gap-2 hover:bg-gray-200 transition shadow-lg" onclick="watchHeroMovie()">
+                        <i class="fas fa-play"></i> Watch Now
+                    </button>
+                    <button class="bg-gray-500 bg-opacity-50 text-white font-bold py-3 px-8 rounded flex items-center gap-2 hover:bg-opacity-70 transition shadow-lg">
+                        <i class="fas fa-info-circle"></i> More Info
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sequence Recommendations Row (Triggered dynamically by SASRec) Moved to top -->
+        <div id="sequence-row-container" class="hidden mb-12 space-y-4">
+             <h2 class="text-2xl font-bold text-white flex items-center gap-2 px-2">
+                 Up Next For You <span class="text-[10px] text-gray-200 bg-purple-600 bg-opacity-80 px-2 py-0.5 rounded uppercase tracking-wider font-bold ml-2 shadow-md">SASRec Sequence</span>
+             </h2>
+             <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4 pt-2 px-2 -mx-2" id="sequence-grid">
+                 <!-- SASRec movies injected here -->
+             </div>
+        </div>
+
+        <!-- Watch History Row (Shows movies user clicked "Watch" on) -->
+        <div id="history-row-container" class="hidden mb-12 space-y-4">
+             <h2 class="text-2xl font-bold text-white flex items-center gap-2 px-2">
+                 Your Watch History <span class="text-[10px] text-gray-200 bg-blue-600 bg-opacity-80 px-2 py-0.5 rounded uppercase tracking-wider font-bold ml-2 shadow-md">Recent Activity</span>
+             </h2>
+             <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4 pt-2 px-2 -mx-2" id="history-grid">
+                 <!-- Watched movies injected here -->
+             </div>
+        </div>
+
+        <div id="rows-container" class="space-y-12">
+            <!-- Dynamic Netflix Rows (Manushri & Suhas models) Injected Here -->
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+        const TMDB_API_KEY = "2ca80d1e4241236c40285b0850aa0922";
+        
+        let selectedMovies = [];
+        let watchHistory = []; // Stores objects {id, title, rating}
+        let sessionWatchCount = 0; 
+        let currentHeroMovie = null;
+        const globalMovieDict = {}; // Store data for search results
+
+        // State for the rating modal
+        let ratingTargetMovie = null; 
+        let currentSelectedRating = 0;
+
+        const onboardingMovies = [
+            {id: 1, title: "Toy Story"}, {id: 260, title: "Star Wars: Episode IV"}, {id: 318, title: "The Shawshank Redemption"}, 
+            {id: 356, title: "Forrest Gump"}, {id: 480, title: "Jurassic Park"}, {id: 527, title: "Schindler's List"}, 
+            {id: 589, title: "Terminator 2: Judgment Day"}, {id: 593, title: "The Silence of the Lambs"}, {id: 1196, title: "Star Wars: Episode V"}, 
+            {id: 1198, title: "Raiders of the Lost Ark"}, {id: 2571, title: "The Matrix"}, {id: 2858, title: "American Beauty"}, 
+            {id: 2959, title: "Fight Club"}, {id: 4993, title: "The Lord of the Rings: The Fellowship of the Ring"}, 
+            {id: 5952, title: "The Lord of the Rings: The Two Towers"}, {id: 7153, title: "The Lord of the Rings: The Return of the King"}, 
+            {id: 49272, title: "Casino Royale"}, {id: 58559, title: "The Dark Knight"}, {id: 79132, title: "Inception"}, 
+            {id: 109487, title: "Interstellar"}, {id: 112852, title: "Guardians of the Galaxy"}, {id: 122904, title: "Deadpool"}, 
+            {id: 134130, title: "The Martian"}, {id: 296, title: "Pulp Fiction"}, {id: 50, title: "The Usual Suspects"},
+            {id: 110, title: "Braveheart"}, {id: 111, title: "Taxi Driver"}, {id: 858, title: "The Godfather"}
+        ];
+
+        async function getPosterUrlByTitle(title) {
+            const cleanTitle = title.replace(/\(\d{4}\)/g, '').trim();
+            let cached = null;
+            try { cached = localStorage.getItem('poster_title_' + cleanTitle); } catch (e) {}
+            if (cached) return cached;
+
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(cleanTitle)}`);
+                const data = await res.json();
+                if (data.results && data.results.length > 0 && data.results[0].poster_path) {
+                    const url = `https://image.tmdb.org/t/p/w500${data.results[0].poster_path}`;
+                    try { localStorage.setItem('poster_title_' + cleanTitle, url); } catch (e) {}
+                    return url;
+                }
+            } catch (e) {}
+            return `https://placehold.co/500x750/222222/888?text=${encodeURIComponent(cleanTitle.substring(0, 15))}`;
+        }
+        
+        async function getMovieDetailsByTitle(title) {
+            const cleanTitle = title.replace(/\(\d{4}\)/g, '').trim();
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(cleanTitle)}`);
+                const data = await res.json();
+                if (data.results && data.results.length > 0) return data.results[0];
+            } catch (e) {}
+            return null;
+        }
+
+        /* --- UI RENDERING --- */
+
+        async function renderOnboardingGrid(movies) {
+            const grid = document.getElementById('onboarding-grid');
+            const moviePromises = movies.map(async (movie) => {
+                const title = movie.title || movie.name;
+                const mid = movie.id || movie.movie_id;
+                const posterUrl = await getPosterUrlByTitle(title);
+                const isSelected = selectedMovies.some(m => m.id === mid);
+                const selectedClass = isSelected ? 'selected' : '';
+                
+                // Use openRatingModal for onboarding
+                return `
+                    <div id="movie-${mid}" class="relative w-full aspect-[2/3] rounded-md overflow-hidden bg-gray-800 cursor-pointer movie-card shadow-lg ${selectedClass}" onclick="openRatingModal(${mid}, '${title.replace(/'/g, "\\'")}')">
+                        <img src="${posterUrl}" loading="lazy" class="w-full h-full object-cover"/>
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+                            <i class="fas fa-check text-4xl text-white"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const movieCardsHtml = await Promise.all(moviePromises);
+            grid.innerHTML = movieCardsHtml.join('');
+        }
+
+        async function renderOnboarding() {
+            await renderOnboardingGrid(onboardingMovies);
+        }
+
+        let onboardingSearchTimeout;
+        async function handleOnboardingSearch(query) {
+            clearTimeout(onboardingSearchTimeout);
+            if (query.length < 2) {
+                renderOnboardingGrid(onboardingMovies);
+                return;
+            }
+            onboardingSearchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+                    if (data.results && data.results.length > 0) {
+                        renderOnboardingGrid(data.results);
+                    } else {
+                        document.getElementById('onboarding-grid').innerHTML = '<div class="col-span-full text-center text-gray-400 py-12 text-xl">No movies found. Try another search.</div>';
+                    }
+                } catch (e) {}
+            }, 300);
+        }
+
+        // Updated toggleMovie to handle the rating logic
+        function toggleMovie(mid, title, rating) {
+            const card = document.getElementById(`movie-${mid}`);
+            const index = selectedMovies.findIndex(m => m.id === mid);
+            
+            if (index > -1) {
+                selectedMovies.splice(index, 1);
+                if (card) card.classList.remove('selected');
+            } else {
+                if (selectedMovies.length >= 5) {
+                    alert("You have already selected 5 movies! Click 'Build My Homepage' to proceed.");
+                    return; 
+                }
+                selectedMovies.push({id: mid, title: title, rating: rating}); 
+                if (card) card.classList.add('selected');
+            }
+            
+            document.getElementById('selection-count').innerText = selectedMovies.length;
+            
+            const btn = document.getElementById('generate-btn');
+            if (selectedMovies.length === 5) {
+                btn.disabled = false;
+                btn.classList.remove('bg-gray-600', 'text-gray-300', 'opacity-50', 'cursor-not-allowed');
+                btn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-gray-600', 'text-gray-300', 'opacity-50', 'cursor-not-allowed');
+                btn.classList.remove('bg-red-600', 'text-white', 'hover:bg-red-700');
+            }
+        }
+
+        async function submitOnboarding() {
+            document.getElementById('onboarding-screen').classList.add('hidden');
+            document.getElementById('loading-screen').classList.remove('hidden');
+            document.getElementById('loading-screen').classList.add('flex');
+            
+            const lastPicked = selectedMovies[selectedMovies.length - 1];
+            try {
+                const tmdbData = await getMovieDetailsByTitle(lastPicked.title);
+                if (tmdbData) {
+                    if (tmdbData.backdrop_path) {
+                        document.getElementById('heroImage').src = `https://image.tmdb.org/t/p/original${tmdbData.backdrop_path}`;
+                    }
+                    document.getElementById('heroTitle').innerText = tmdbData.title || lastPicked.title;
+                    document.getElementById('heroDesc').innerText = tmdbData.overview || "Based on your selections, our 3-Model Ensemble has curated a highly personalized viewing experience just for you.";
+                    currentHeroMovie = { id: lastPicked.id, title: tmdbData.title || lastPicked.title };
+                }
+            } catch (e) {
+                document.getElementById('heroTitle').innerText = lastPicked.title;
+                currentHeroMovie = lastPicked;
+            }
+
+            const payload = { ratings: selectedMovies.map(m => [m.id, m.rating]) };
+
+            try {
+                const response = await fetch(`${API_URL}/recommend/homepage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                await renderHomepage(data.rows);
+                
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('loading-screen').classList.remove('flex');
+                document.getElementById('main-content').classList.remove('hidden');
+                fetchSequenceRecommendations(); 
+                
+            } catch (error) {
+                alert("Super Backend Error: Make sure your FastAPI orchestrator is running!");
+                window.location.reload();
+            }
+        }
+
+        async function renderHomepage(rows) {
+            const container = document.getElementById('rows-container');
+            
+            const rowsPromises = rows.map(async (row) => {
+                if (row.title === "Keep the Momentum Going" || row.tag === "SASRec Sequence Prediction") return '';
+                if(!row.movies || row.movies.length === 0) return '';
+
+                const moviePromises = row.movies.map(async (movie) => {
+                    const posterUrl = await getPosterUrlByTitle(movie.title);
+                    
+                    // Revert back to watchMovie for dashboard cards
+                    return `
+                        <div class="relative group w-44 h-64 rounded-md overflow-hidden bg-gray-800 flex-shrink-0 cursor-pointer movie-card shadow-lg" onclick="watchMovie(${movie.movie_id}, '${movie.title.replace(/'/g, "\\'")}', 5.0)">
+                            <img src="${posterUrl}" loading="lazy" class="absolute inset-0 w-full h-full object-cover"/>
+                            <div class="absolute inset-0 card-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                                <h3 class="text-white font-bold text-sm drop-shadow-md">${movie.title}</h3>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <button class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:bg-gray-300 transition" onclick="event.stopPropagation(); watchMovie(${movie.movie_id}, '${movie.title.replace(/'/g, "\\'")}', 5.0)">
+                                        <i class="fas fa-play text-xs ml-0.5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                const cardsHTML = (await Promise.all(moviePromises)).join('');
+
+                return `
+                    <div>
+                        <h2 class="text-xl font-bold mb-3 text-white flex items-center gap-2 px-2">
+                            ${row.title} <span class="text-[10px] text-gray-200 bg-red-600 bg-opacity-80 px-2 py-0.5 rounded rounded uppercase tracking-wider font-bold ml-2 shadow-md">${row.tag}</span>
+                        </h2>
+                        <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-4 pt-2 px-2 -mx-2">
+                            ${cardsHTML}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const rowsHTML = await Promise.all(rowsPromises);
+            container.innerHTML = rowsHTML.join('');
+            document.getElementById('nav-links').classList.remove('hidden');
+        }
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-black');
+                nav.classList.remove('bg-gradient-to-b', 'from-black', 'to-transparent');
+            } else {
+                nav.classList.remove('bg-black');
+                nav.classList.add('bg-gradient-to-b', 'from-black', 'to-transparent');
+            }
+        });
+
+        /* --- SEARCH LOGIC --- */
+
+        function toggleSearch() {
+            const container = document.getElementById('search-container');
+            const input = document.getElementById('search-input');
+            container.classList.toggle('active');
+            if (container.classList.contains('active')) input.focus();
+            else {
+                input.value = '';
+                document.getElementById('search-results').classList.remove('active');
+            }
+        }
+
+        let searchTimeout;
+        async function handleSearch(query) {
+            clearTimeout(searchTimeout);
+            const resultsContainer = document.getElementById('search-results');
+            if (query.length < 2) {
+                resultsContainer.classList.remove('active');
+                return;
+            }
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+                    if (data.results && data.results.length > 0) {
+                        renderSearchResults(data.results);
+                        resultsContainer.classList.add('active');
+                    } else {
+                        resultsContainer.innerHTML = '<div class="p-4 text-gray-400 text-sm">No results found</div>';
+                        resultsContainer.classList.add('active');
+                    }
+                } catch (e) {}
+            }, 300);
+        }
+
+        async function renderSearchResults(results) {
+            const container = document.getElementById('search-results');
+            const resultPromises = results.slice(0, 10).map(async (movie) => {
+                const posterUrl = await getPosterUrlByTitle(movie.title);
+                return `
+                    <div class="relative group w-full aspect-[2/3] rounded-md overflow-hidden bg-gray-800 flex-shrink-0 cursor-pointer movie-card shadow-lg" onmousedown="event.preventDefault(); watchMovie(${movie.movie_id}, '${movie.title.replace(/'/g, "\\'")}', 5.0)">
+                        <img src="${posterUrl}" loading="lazy" class="absolute inset-0 w-full h-full object-cover"/>
+                        <div class="absolute inset-0 card-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2">
+                            <h3 class="text-white font-bold text-xs drop-shadow-md leading-tight">${movie.title}</h3>
+                        </div>
+                    </div>
+                `;
+            });
+            const html = await Promise.all(resultPromises);
+            container.innerHTML = `<div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">${html.join('')}</div>`;
+        }
+        
+        document.addEventListener('mousedown', (e) => {
+            const searchContainer = document.getElementById('search-container');
+            if (!searchContainer.contains(e.target) && searchContainer.classList.contains('active')) toggleSearch();
+        });
+
+        /* --- RATING & WATCH LOGIC --- */
+
+        function openRatingModal(id, title) {
+            // Check if already selected to toggle off without rating
+            const isSelected = selectedMovies.some(m => m.id === id);
+            if (isSelected) {
+                toggleMovie(id, title, 0); // Toggle off
+                return;
+            }
+
+            if (selectedMovies.length >= 5) {
+                alert("You have already selected 5 movies! Click 'Build My Homepage' to proceed.");
+                return; 
+            }
+
+            document.getElementById('search-results').classList.remove('active');
+            ratingTargetMovie = { id, title };
+            currentSelectedRating = 0;
+            
+            document.getElementById('modal-title').innerText = `Rate: ${title}`;
+            
+            // Reset stars visually
+            const stars = document.querySelectorAll('#modal-stars i');
+            stars.forEach(s => s.classList.remove('active'));
+
+            const modal = document.getElementById('rating-modal');
+            modal.classList.add('active');
+        }
+
+        function closeRatingModal() {
+            const modal = document.getElementById('rating-modal');
+            modal.classList.remove('active');
+            ratingTargetMovie = null;
+        }
+
+        // Setup star click listeners
+        document.querySelectorAll('#modal-stars i').forEach(star => {
+            star.addEventListener('click', (e) => {
+                const rating = parseInt(e.target.getAttribute('data-rating'));
+                currentSelectedRating = rating;
+                
+                // Remove active class from all
+                document.querySelectorAll('#modal-stars i').forEach(s => s.classList.remove('active'));
+                
+                // Add active class to clicked star and previous (CSS handles previous due to reverse order)
+                e.target.classList.add('active');
+            });
+        });
+
+        function submitRating() {
+            if (!ratingTargetMovie) return;
+            
+            // If they didn't select stars, default to 3.0
+            const finalRating = currentSelectedRating > 0 ? parseFloat(currentSelectedRating) : 3.0;
+            
+            toggleMovie(ratingTargetMovie.id, ratingTargetMovie.title, finalRating);
+            closeRatingModal();
+        }
+
+        function watchHeroMovie() {
+            if (currentHeroMovie) watchMovie(currentHeroMovie.id, currentHeroMovie.title, 5.0);
+        }
+
+        // ⚡ THE UPDATED WATCH MOVIE FUNCTION ⚡
+        async function watchMovie(id, title, rating) {
+            document.getElementById('search-results').classList.remove('active');
+            
+            // 1. Update local watch history
+            const historyIndex = watchHistory.findIndex(m => m.id === id);
+            if (historyIndex > -1) watchHistory.splice(historyIndex, 1);
+            watchHistory.push({ id: id, title: title, rating: rating });
+            sessionWatchCount++;
+
+            // 2. Update the Hero Banner immediately to show the user's action was registered
+            try {
+                const tmdbData = await getMovieDetailsByTitle(title);
+                if (tmdbData) {
+                    if (tmdbData.backdrop_path) document.getElementById('heroImage').src = `https://image.tmdb.org/t/p/original${tmdbData.backdrop_path}`;
+                    document.getElementById('heroTitle').innerText = tmdbData.title || title;
+                    document.getElementById('heroDesc').innerText = tmdbData.overview || "";
+                    currentHeroMovie = { id: id, title: tmdbData.title || title };
+                }
+            } catch(e) {}
+            
+            // 3. Scroll back to top to view the updated Hero and new SASRec sequence
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // 4. Update the "Watch History" row UI
+            renderHistoryRow();
+            
+            // 5. Instantly update the SASRec (Sequential) row 
+            fetchSequenceRecommendations();
+
+            // 6. Instantly update the "Because You Watched..." (Similarity) Row
+            // We run this in the background WITHOUT the full loading screen 
+            // so it updates cleanly after every single movie watch.
+            silentRefreshHomepageRecommendations();
+
+            // 7. Full refresh only if they've watched 7 things to clear old recommendations
+            if (sessionWatchCount >= 7) {
+                sessionWatchCount = 0;
+                refreshHomepageRecommendations();
+            }
+        }
+
+        // ⚡ THE NEW SILENT REFRESH FUNCTION ⚡
+        async function silentRefreshHomepageRecommendations() {
+            const allActivityMap = new Map();
+            selectedMovies.forEach(m => allActivityMap.set(m.id, {id: m.id, rating: m.rating}));
+            watchHistory.forEach(m => allActivityMap.set(m.id, {id: m.id, rating: m.rating}));
+
+            // Force the backend to center the Similarity Engine on the ABSOLUTE LATEST movie
+            const latestMovie = watchHistory[watchHistory.length - 1];
+            if (latestMovie) allActivityMap.set(latestMovie.id, {id: latestMovie.id, rating: 5.1});
+
+            const payload = { ratings: Array.from(allActivityMap.values()).map(m => [m.id, m.rating]) };
+
+            try {
+                const response = await fetch(`${API_URL}/recommend/homepage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                
+                // Re-render the rows instantly
+                await renderHomepage(data.rows);
+            } catch (error) {
+                console.error("Silent background refresh failed:", error);
+            }
+        }
+
+        async function fetchSequenceRecommendations() {
+            const fullHistory = [...selectedMovies.map(m => m.id), ...watchHistory.map(m => m.id)];
+            try {
+                const response = await fetch(`${API_URL}/recommend/sequence`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_history: fullHistory })
+                });
+                const data = await response.json();
+                if (data.recommended_movies && data.recommended_movies.length > 0) renderSequenceRow(data.recommended_movies);
+            } catch (e) {}
+        }
+
+        async function renderSequenceRow(movies) {
+            const container = document.getElementById('sequence-row-container');
+            const grid = document.getElementById('sequence-grid');
+            
+            const moviePromises = movies.map(async (movie) => {
+                const posterUrl = await getPosterUrlByTitle(movie.title);
+                return `
+                    <div class="relative group w-44 h-64 rounded-md overflow-hidden bg-gray-800 flex-shrink-0 cursor-pointer movie-card shadow-lg" onclick="watchMovie(${movie.movie_id}, '${movie.title.replace(/'/g, "\\'")}', 5.0)">
+                        <img src="${posterUrl}" loading="lazy" class="absolute inset-0 w-full h-full object-cover"/>
+                        <div class="absolute inset-0 card-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                            <h3 class="text-white font-bold text-sm drop-shadow-md">${movie.title}</h3>
+                             <div class="flex items-center gap-2 mt-2">
+                                <button class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:bg-gray-300 transition" onclick="event.stopPropagation(); watchMovie(${movie.movie_id}, '${movie.title.replace(/'/g, "\\'")}', 5.0)">
+                                    <i class="fas fa-play text-xs ml-0.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            const cardsHTML = (await Promise.all(moviePromises)).join('');
+            grid.innerHTML = cardsHTML;
+            container.classList.remove('hidden');
+        }
+
+        async function renderHistoryRow() {
+            const container = document.getElementById('history-row-container');
+            const grid = document.getElementById('history-grid');
+            if (watchHistory.length === 0) return;
+
+            const reversedHistory = [...watchHistory].reverse();
+            const moviePromises = reversedHistory.map(async (movie) => {
+                const posterUrl = await getPosterUrlByTitle(movie.title);
+                return `
+                    <div class="relative group w-44 h-64 rounded-md overflow-hidden bg-gray-800 flex-shrink-0 cursor-pointer movie-card shadow-lg" onclick="watchMovie(${movie.id}, '${movie.title.replace(/'/g, "\\'")}', 5.0)">
+                        <img src="${posterUrl}" loading="lazy" class="absolute inset-0 w-full h-full object-cover"/>
+                        <div class="absolute inset-0 card-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                            <h3 class="text-white font-bold text-sm drop-shadow-md mb-1">${movie.title}</h3>
+                            <!-- Remove explicit rating display for watched movies if you want -->
+                        </div>
+                    </div>
+                `;
+            });
+            const cardsHTML = (await Promise.all(moviePromises)).join('');
+            grid.innerHTML = cardsHTML;
+            container.classList.remove('hidden');
+        }
+
+        async function refreshHomepageRecommendations() {
+            document.getElementById('loading-screen').classList.remove('hidden');
+            document.getElementById('loading-screen').classList.add('flex');
+            document.querySelector('#loading-screen h2').innerText = "Updating Your Taste Profile...";
+
+            const allActivityMap = new Map();
+            selectedMovies.forEach(m => allActivityMap.set(m.id, {id: m.id, rating: m.rating}));
+            
+            // Overwrite with any new ratings provided during the session
+            watchHistory.forEach(m => allActivityMap.set(m.id, {id: m.id, rating: m.rating}));
+
+            // Optional hack: make the very latest movie 5.1 so it anchors the "Because you watched" row
+            const latestMovie = watchHistory[watchHistory.length - 1];
+            if (latestMovie) allActivityMap.set(latestMovie.id, {id: latestMovie.id, rating: 5.1});
+
+            const payload = { ratings: Array.from(allActivityMap.values()).map(m => [m.id, m.rating]) };
+
+            try {
+                const response = await fetch(`${API_URL}/recommend/homepage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                await renderHomepage(data.rows);
+                
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('loading-screen').classList.remove('flex');
+                document.querySelector('#loading-screen h2').innerText = "Initializing Super Backend...";
+            } catch (error) {
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('loading-screen').classList.remove('flex');
+            }
+        }
+
+        function showHistory() {
+            alert(`You have watched and rated ${watchHistory.length} unique movies during this session.\n\nCombined with your ${selectedMovies.length} initial Taste Profile picks, your sequence passed to SASRec is ${selectedMovies.length + watchHistory.length} items long.`);
+        }
+
+        renderOnboarding();
+    </script>
+</body>
+</html>

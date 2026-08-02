@@ -1,0 +1,13 @@
+pandas
+scikit-learn
+scipy
+faiss-cpu
+sentence_transformers
+gensim
+ipywidgets
+streamlit
+uvicorn
+pydantic
+fastapi
+torch==2.5.1
+numpy

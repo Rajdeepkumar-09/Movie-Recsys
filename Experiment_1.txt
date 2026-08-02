@@ -1,0 +1,87 @@
+(C:\Users\Rajdeep Kumar\movie-recsys\recsys-env) C:\Users\Rajdeep Kumar\movie-recsys>python src\train.py
+🚀 Training on device: cuda
+GPU Name: NVIDIA GeForce RTX 5060 Laptop GPU
+Loading dataset into memory...
+Total training batches per epoch: 538
+Epoch [1/10] | Batch [100/538] | Loss: 0.5154
+Epoch [1/10] | Batch [200/538] | Loss: 0.4456
+Epoch [1/10] | Batch [300/538] | Loss: 0.4188
+Epoch [1/10] | Batch [400/538] | Loss: 0.3741
+Epoch [1/10] | Batch [500/538] | Loss: 0.3493
+✅ Epoch 1 Complete | Avg Loss: 0.4572 | Time: 27.55 sec
+Epoch [2/10] | Batch [100/538] | Loss: 0.3696
+Epoch [2/10] | Batch [200/538] | Loss: 0.3109
+Epoch [2/10] | Batch [300/538] | Loss: 0.3209
+Epoch [2/10] | Batch [400/538] | Loss: 0.3073
+Epoch [2/10] | Batch [500/538] | Loss: 0.3308
+✅ Epoch 2 Complete | Avg Loss: 0.3218 | Time: 19.94 sec
+Epoch [3/10] | Batch [100/538] | Loss: 0.3107
+Epoch [3/10] | Batch [200/538] | Loss: 0.2794
+Epoch [3/10] | Batch [300/538] | Loss: 0.2872
+Epoch [3/10] | Batch [400/538] | Loss: 0.2721
+Epoch [3/10] | Batch [500/538] | Loss: 0.2810
+✅ Epoch 3 Complete | Avg Loss: 0.2925 | Time: 20.03 sec
+Epoch [4/10] | Batch [100/538] | Loss: 0.2672
+Epoch [4/10] | Batch [200/538] | Loss: 0.2720
+Epoch [4/10] | Batch [300/538] | Loss: 0.2765
+Epoch [4/10] | Batch [400/538] | Loss: 0.2909
+Epoch [4/10] | Batch [500/538] | Loss: 0.2672
+✅ Epoch 4 Complete | Avg Loss: 0.2776 | Time: 20.06 sec
+Epoch [5/10] | Batch [100/538] | Loss: 0.2571
+Epoch [5/10] | Batch [200/538] | Loss: 0.2689
+Epoch [5/10] | Batch [300/538] | Loss: 0.2450
+Epoch [5/10] | Batch [400/538] | Loss: 0.2797
+Epoch [5/10] | Batch [500/538] | Loss: 0.2615
+✅ Epoch 5 Complete | Avg Loss: 0.2685 | Time: 20.00 sec
+Epoch [6/10] | Batch [100/538] | Loss: 0.2668
+Epoch [6/10] | Batch [200/538] | Loss: 0.2713
+Epoch [6/10] | Batch [300/538] | Loss: 0.2810
+Epoch [6/10] | Batch [400/538] | Loss: 0.2521
+Epoch [6/10] | Batch [500/538] | Loss: 0.2723
+✅ Epoch 6 Complete | Avg Loss: 0.2617 | Time: 21.06 sec
+Epoch [7/10] | Batch [100/538] | Loss: 0.2584
+Epoch [7/10] | Batch [200/538] | Loss: 0.2494
+Epoch [7/10] | Batch [300/538] | Loss: 0.2542
+Epoch [7/10] | Batch [400/538] | Loss: 0.2550
+Epoch [7/10] | Batch [500/538] | Loss: 0.2507
+✅ Epoch 7 Complete | Avg Loss: 0.2571 | Time: 38.75 sec
+Epoch [8/10] | Batch [100/538] | Loss: 0.2548
+Epoch [8/10] | Batch [200/538] | Loss: 0.2384
+Epoch [8/10] | Batch [300/538] | Loss: 0.2631
+Epoch [8/10] | Batch [400/538] | Loss: 0.2505
+Epoch [8/10] | Batch [500/538] | Loss: 0.2733
+✅ Epoch 8 Complete | Avg Loss: 0.2526 | Time: 28.96 sec
+Epoch [9/10] | Batch [100/538] | Loss: 0.2445
+Epoch [9/10] | Batch [200/538] | Loss: 0.2460
+Epoch [9/10] | Batch [300/538] | Loss: 0.2429
+Epoch [9/10] | Batch [400/538] | Loss: 0.2464
+Epoch [9/10] | Batch [500/538] | Loss: 0.2378
+✅ Epoch 9 Complete | Avg Loss: 0.2490 | Time: 22.55 sec
+Epoch [10/10] | Batch [100/538] | Loss: 0.2194
+Epoch [10/10] | Batch [200/538] | Loss: 0.2581
+Epoch [10/10] | Batch [300/538] | Loss: 0.2468
+Epoch [10/10] | Batch [400/538] | Loss: 0.2622
+Epoch [10/10] | Batch [500/538] | Loss: 0.2556
+✅ Epoch 10 Complete | Avg Loss: 0.2465 | Time: 19.69 sec
+💾 Model architecture and weights saved to models/weights\sasrec_model.pth
+
+(C:\Users\Rajdeep Kumar\movie-recsys\recsys-env) C:\Users\Rajdeep Kumar\movie-recsys>
+
+
+
+(C:\Users\Rajdeep Kumar\movie-recsys\recsys-env) C:\Users\Rajdeep Kumar\movie-recsys\src>python eval_sasrec.py
+🔍 Evaluating on device: cuda
+Model loaded. Starting rigorous full-catalog evaluation...
+Processed 25600/137477 users...
+Processed 51200/137477 users...
+Processed 76800/137477 users...
+Processed 102400/137477 users...
+Processed 128000/137477 users...
+
+========================================
+🏆 SASREC EVALUATION RESULTS
+========================================
+Hit Ratio @ 10 : 0.0764
+NDCG @ 10      : 0.0327
+========================================
+
