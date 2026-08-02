@@ -1,0 +1,28 @@
+# ========================
+# 1. Python & Environments
+# ========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+recsys-env/
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# ========================
+# 2. OS / System Files
+# ========================
+.DS_Store
+Thumbs.db
+```eof
+
+Because you previously told Git to ignore those files, we need to refresh Git's memory so it notices them again. Run these exact commands in your terminal:
+
+1. Clear Git's cache (this won't delete your files, just refreshes Git's brain):
+```cmd
+git rm -r --cached .
